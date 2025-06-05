@@ -1,5 +1,7 @@
 package cavcav.jwt.dto;
 
+import cavcav.jwt.model.Role;
+import cavcav.jwt.model.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -7,8 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.management.relation.Role;
 
 @Builder
 @Data
@@ -40,5 +40,17 @@ public class UserRegistrationDto {
     private String phone;
 
     private Role role;
+
+    public static UserRegistrationDto toDto(User user) {
+        return UserRegistrationDto.builder().id(user.getId()).firstName(user.getFirstName()).lastName(user.getLastName())
+                .email(user.getEmail()).password(user.getPassword()).role(user.getRole()).phone(user.getPhone()).build();
+    }
+
+    public static User toEntity(UserRegistrationDto dto) {
+        return User.builder().firstName(dto.getFirstName()).lastName(dto.getLastName())
+                .email(dto.getEmail()).password(dto.getPassword()).role(dto.getRole())
+                .phone(dto.getPhone()).build();
+    }
+
 
 }
