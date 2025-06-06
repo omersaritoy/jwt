@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -48,35 +49,15 @@ public class User implements UserDetails {
     private String confirmPassword;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @ElementCollection(targetClass = Role.class,fetch = FetchType.EAGER)
+    @JoinTable(name="authorities",joinColumns = @JoinColumn(name="user_id"))
+    @Column(name="role",nullable = false)
+    private Set<Role> authorities;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
-    }
 
     @Override
     public String getUsername() {
         return email;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

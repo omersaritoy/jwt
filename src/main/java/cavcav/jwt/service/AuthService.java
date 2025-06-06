@@ -23,12 +23,10 @@ public class AuthService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder=new BCryptPasswordEncoder(12);
 
-    private final AuthenticationManager authenticationManager;
 
-    public AuthService(UserRepository userRepository,@Lazy AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
 
-        this.authenticationManager = authenticationManager;
     }
 
 
@@ -47,12 +45,6 @@ public class AuthService implements UserDetailsService {
         return ResponseEntity.ok(toDto(newUser));
     }
 
-    public String verify(UserLoginDto user) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-        if(authentication.isAuthenticated()) {
-            return "Authentication Success";
-        }
-        return  "failure";
-    }
+
 
 }

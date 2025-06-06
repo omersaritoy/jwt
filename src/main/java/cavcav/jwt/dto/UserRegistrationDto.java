@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Builder
 @Data
 @AllArgsConstructor
@@ -39,16 +41,16 @@ public class UserRegistrationDto {
     @Size(max = 15, message = "Phone must not exceed 15 characters")
     private String phone;
 
-    private Role role;
+    private Set<Role> authorities;
 
     public static UserRegistrationDto toDto(User user) {
         return UserRegistrationDto.builder().id(user.getId()).firstName(user.getFirstName()).lastName(user.getLastName())
-                .email(user.getEmail()).password(user.getPassword()).role(user.getRole()).phone(user.getPhone()).build();
+                .email(user.getEmail()).password(user.getPassword()).authorities(user.getAuthorities()).phone(user.getPhone()).build();
     }
 
     public static User toEntity(UserRegistrationDto dto) {
         return User.builder().firstName(dto.getFirstName()).lastName(dto.getLastName())
-                .email(dto.getEmail()).password(dto.getPassword()).role(dto.getRole())
+                .email(dto.getEmail()).password(dto.getPassword()).authorities(dto.getAuthorities())
                 .phone(dto.getPhone()).build();
     }
 
