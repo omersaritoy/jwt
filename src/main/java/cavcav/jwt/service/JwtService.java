@@ -1,9 +1,11 @@
 package cavcav.jwt.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -32,11 +34,34 @@ public class JwtService {
                 .signWith(getSignKey())
                 .compact();
 
-
     }
-    public Key getSignKey(){
+    public boolean validateToken(String token , UserDetails userDetails) {
+        String email=extractUser(token);
+        Date expiration=extractExpiration(token);
+        return userDetails.getUsername().equals(email)&&!expiration.before(new Date());
+    }
+    public Date extractExpiration(String token) {
+        Claims claims=Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getExpiration();
+    }
+
+    public String extractUser(String token) {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSignKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+    }
+
+    public Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
 
 }

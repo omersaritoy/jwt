@@ -23,14 +23,16 @@ public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager manager;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public AuthController(AuthService authService, AuthenticationManager manager, JwtService jwtService) {
+    public AuthController(AuthService authService, AuthenticationManager manager, JwtService jwtService, UserRepository userRepository) {
 
         this.authService = authService;
 
         this.manager = manager;
 
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/register")
@@ -44,10 +46,14 @@ public class AuthController {
 
         if (authentication.isAuthenticated()) {
             String token=jwtService.generateToken(authentication.getName());
+            System.out.println(token);
             return ResponseEntity.ok("token:"+token);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
 
     }
-
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userRepository.findAll());
+    }
 }
