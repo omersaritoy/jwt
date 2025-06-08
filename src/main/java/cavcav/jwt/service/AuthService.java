@@ -2,6 +2,7 @@ package cavcav.jwt.service;
 
 import cavcav.jwt.dto.UserLoginDto;
 import cavcav.jwt.dto.UserRegistrationDto;
+import cavcav.jwt.exceptions.EmailAlreadyExistException;
 import cavcav.jwt.model.User;
 import cavcav.jwt.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
@@ -37,8 +38,11 @@ public class AuthService implements UserDetailsService {
     }
 
 
-    public ResponseEntity<UserRegistrationDto> create(UserRegistrationDto dto) {
+    public ResponseEntity<UserRegistrationDto> create(UserRegistrationDto dto)  {
         User newUser = toEntity(dto);
+        if(userRepository.existsByEmail(dto.getEmail())) {
+            throw new EmailAlreadyExistException("Email already exists: " + dto.getEmail());
+        }
         newUser.setPassword(encoder.encode(dto.getPassword()));
         newUser = userRepository.save(newUser);
 
